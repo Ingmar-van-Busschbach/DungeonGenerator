@@ -65,6 +65,12 @@ public class DungeonGenerator : MonoBehaviour
                 currentBTEntry = currentBTEntry.parent;
                 continue;
             }
+
+            //Delay the algorithm and draw the room.
+            yield return new WaitForSeconds(executionDelay);
+            DrawRoom(currentBTEntry, Color.yellow);
+
+
             //Check if the current entry can be divided into smaller rooms. If not, mark as completed.
             if (currentBTEntry.room.width < roomMinSize.x * 2 && currentBTEntry.room.height < roomMinSize.y * 2)
             {
@@ -83,10 +89,6 @@ public class DungeonGenerator : MonoBehaviour
 
             //We have found a Binary Tree Entry to split into two rooms or complete as a large room.
 
-            //Delay the algorithm and draw the room.
-            yield return new WaitForSeconds(executionDelay);
-            DrawRoom(currentBTEntry);
-
             //Random chance to have larger rooms within the generated dungeon.
             if (currentBTEntry.room.width < roomMaxSize.x && currentBTEntry.room.height < roomMaxSize.y)
             {
@@ -102,11 +104,11 @@ public class DungeonGenerator : MonoBehaviour
         }
     }
 
-    private void DrawRoom(BTEntry currentBTEntry)
+    private void DrawRoom(BTEntry currentBTEntry, Color color)
     {
         //Debug Drawing Batcher must use a value instead of a reference, so it cannot use currentBTEntry.room data as that is a reference type.
         RectInt room = currentBTEntry.room;
-        DebugDrawingBatcher.GetInstance().BatchCall(() => AlgorithmsUtils.DebugRectInt(room, Color.yellow));
+        DebugDrawingBatcher.GetInstance().BatchCall(() => AlgorithmsUtils.DebugRectInt(room, color));
     }
 
     private BTEntry SplitRoom(BTEntry currentBTEntry)
