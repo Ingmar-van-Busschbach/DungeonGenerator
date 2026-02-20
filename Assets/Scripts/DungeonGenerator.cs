@@ -47,6 +47,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         DebugDrawingBatcher.GetInstance().ClearAllBatchedCalls();
         StopAllCoroutines();
+        numberGenerator = new System.Random(seed);
         StartCoroutine(GenerateDungeon());
     }
     private IEnumerator GenerateDungeon()
