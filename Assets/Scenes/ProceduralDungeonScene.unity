@@ -153,8 +153,9 @@ MonoBehaviour:
   splitDirectionBias: 0.3
   roomMaxSize: {x: 60, y: 60}
   largeRoomChance: 0.3
+  seed: 40
   generateOnStart: 1
-  executionDelay: 0.04
+  executionDelay: 0
 --- !u!4 &96270176
 Transform:
   m_ObjectHideFlags: 0

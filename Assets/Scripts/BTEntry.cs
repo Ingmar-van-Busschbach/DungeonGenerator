@@ -4,6 +4,7 @@ public class BTEntry
     public enum BTEntryStatus { Complete, MissingLeft, MissingRight, MissingBoth }
     public RectInt room;
     public BTEntryStatus complete = BTEntryStatus.MissingBoth;
+    public bool leaf = false;
     public BTEntry parent;
     public BTEntry left;
     public BTEntry right;

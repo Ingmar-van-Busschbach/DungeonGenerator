@@ -23,15 +23,19 @@ public class DungeonGenerator : MonoBehaviour
     [Space]
 
     [Header("Algorithm")]
+    [Tooltip("Random number generator seed")]
+    [Range(0, 100)] [SerializeField] private int seed;
     [Tooltip("Whether to start generating a dungeon on Start, or to wait for the Generate Dungeon button to be pressed.")]
     [SerializeField] private bool generateOnStart = true;
     [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
     [Range(0, 0.1f)] [SerializeField] private float executionDelay = 0.04f;
 
     private BTEntry originBTEntry;
+    private System.Random numberGenerator;
 
     private void Start()
     {
+        numberGenerator = new System.Random(seed);
         if (generateOnStart)
         {
             StartCoroutine(GenerateDungeon());
@@ -74,7 +78,7 @@ public class DungeonGenerator : MonoBehaviour
             //Check if the current entry can be divided into smaller rooms. If not, mark as completed.
             if (currentBTEntry.room.width < roomMinSize.x * 2 && currentBTEntry.room.height < roomMinSize.y * 2)
             {
-                currentBTEntry.complete = BTEntry.BTEntryStatus.Complete;
+                CompleteRoom(currentBTEntry);
                 continue;
             }
             //Select left room if generation was already done on the right branch but not on the left.
@@ -92,9 +96,9 @@ public class DungeonGenerator : MonoBehaviour
             //Random chance to have larger rooms within the generated dungeon.
             if (currentBTEntry.room.width < roomMaxSize.x && currentBTEntry.room.height < roomMaxSize.y)
             {
-                if (Random.value < largeRoomChance)
+                if ((float)(numberGenerator.Next(1, 100) / 100) < largeRoomChance)
                 {
-                    currentBTEntry.complete = BTEntry.BTEntryStatus.Complete;
+                    CompleteRoom(currentBTEntry);
                     continue;
                 }
             }
@@ -111,10 +115,19 @@ public class DungeonGenerator : MonoBehaviour
         DebugDrawingBatcher.GetInstance().BatchCall(() => AlgorithmsUtils.DebugRectInt(room, color));
     }
 
+    private void CompleteRoom(BTEntry currentBTEntry)
+    {
+        currentBTEntry.complete = BTEntry.BTEntryStatus.Complete;
+        currentBTEntry.leaf = true;
+        //Make the room 1 unit larger in every direction to allow the rooms to overlap for future algorithms.
+        currentBTEntry.room = new RectInt(currentBTEntry.room.position.x - 1, currentBTEntry.room.position.y - 1, currentBTEntry.room.width + 2, currentBTEntry.room.height + 2);
+        DrawRoom(currentBTEntry, Color.red);
+    }
+
     private BTEntry SplitRoom(BTEntry currentBTEntry)
     {
         //Randomly select whether to attempt to horizontally or vertically split first, then attempt splitting that way if the room is large enough.
-        if (Random.value < splitDirectionBias)
+        if ((float)(numberGenerator.Next(1, 100) / 100) < splitDirectionBias)
         {
             if (currentBTEntry.room.width >= roomMinSize.x * 2)
             {
@@ -140,7 +153,7 @@ public class DungeonGenerator : MonoBehaviour
     
     private BTEntry SplitHorizontally(BTEntry currentBTEntry)
     {
-        int splitPointX = (int)Random.Range(roomMinSize.x, currentBTEntry.room.width - roomMinSize.x);
+        int splitPointX = numberGenerator.Next((int)roomMinSize.x, (int)(currentBTEntry.room.width - roomMinSize.x));
         currentBTEntry.right = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y, splitPointX, currentBTEntry.room.height));
         currentBTEntry.left = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x + splitPointX, currentBTEntry.room.position.y, currentBTEntry.room.width - splitPointX, currentBTEntry.room.height));
         return currentBTEntry.right;
@@ -148,7 +161,7 @@ public class DungeonGenerator : MonoBehaviour
 
     private BTEntry SplitVertically(BTEntry currentBTEntry)
     {
-        int splitPointY = (int)Random.Range(roomMinSize.y, currentBTEntry.room.height - roomMinSize.y);
+        int splitPointY = numberGenerator.Next((int)roomMinSize.y, (int)(currentBTEntry.room.height - roomMinSize.y));
         currentBTEntry.right = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y, currentBTEntry.room.width, splitPointY));
         currentBTEntry.left = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y + splitPointY, currentBTEntry.room.width, currentBTEntry.room.height - splitPointY));
         return currentBTEntry.right;
