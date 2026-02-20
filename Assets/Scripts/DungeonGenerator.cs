@@ -34,9 +34,9 @@ public class DungeonGenerator : MonoBehaviour
     [Space]
 
     [Header("Debug")]
+    [SerializeField] private bool writeDebug = true;
     [SerializeField] private bool drawDungeonGeneration = true;
     [SerializeField] private bool drawRooms = true;
-    [SerializeField] private bool writeDebug = true;
 
     private System.Random numberGenerator;
     private DungeonWrapper dungeonWrapper;
@@ -208,9 +208,7 @@ public class DungeonGenerator : MonoBehaviour
 
     private void ConvertBinaryTreeToList()
     {
-        WriteDebug("Converting binary tree to list...");
         AddLeafsToList(dungeonWrapper.origin);
-        WriteDebug("Added " + dungeonWrapper.rooms.Count + " rooms into list.");
     }
 
 

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class DungeonWrapper : MonoBehaviour
 {
-    public enum DungeonStatus { Empty, RoomsCompleted }
+    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted }
 
     public BTEntry origin;
     public List<BTEntry> rooms = new();
