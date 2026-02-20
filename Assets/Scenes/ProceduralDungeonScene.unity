@@ -148,10 +148,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ee660a2a5778dc48ac01f61c7846199, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonSize: {x: 50, y: 100}
-  roomMinSize: {x: 5, y: 5}
+  dungeonSize: {x: 150, y: 250}
+  roomMinSize: {x: 25, y: 25}
   splitDirectionBias: 0.3
-  roomMaxSize: {x: 30, y: 30}
+  roomMaxSize: {x: 60, y: 60}
   largeRoomChance: 0.3
   generateOnStart: 1
   executionDelay: 0.04
