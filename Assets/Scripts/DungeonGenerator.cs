@@ -8,6 +8,8 @@ public class DungeonGenerator : MonoBehaviour
     [Header("Dungeon Settings")]
     [Tooltip("Size of the whole dungeon in meters. X is width, Y is height.")]
     [SerializeField] private Vector2 dungeonSize = new Vector2(50, 100);
+    [Tooltip("Random number generator seed")]
+    [Range(0, 100)][SerializeField] private int seed;
 
     [Space]
 
@@ -24,12 +26,16 @@ public class DungeonGenerator : MonoBehaviour
     [Space]
 
     [Header("Algorithm")]
-    [Tooltip("Random number generator seed")]
-    [Range(0, 100)] [SerializeField] private int seed;
     [Tooltip("Whether to start generating a dungeon on Start, or to wait for the Generate Dungeon button to be pressed.")]
     [SerializeField] private bool generateOnStart = true;
     [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
     [Range(0, 0.1f)] [SerializeField] private float executionDelay = 0.04f;
+
+    [Space]
+
+    [Header("Debug")]
+    [SerializeField] private bool drawDungeonGeneration = true;
+    [SerializeField] private bool drawRooms = true;
 
     private System.Random numberGenerator;
     private DungeonWrapper dungeonWrapper;
@@ -41,14 +47,13 @@ public class DungeonGenerator : MonoBehaviour
             StartCoroutine(GenerateDungeon());
         }
     }
-
-    [Button(enabledMode: EButtonEnableMode.Playmode)]
-    private void StartGeneration()
+    public void StartGeneration()
     {
         DebugDrawingBatcher.GetInstance().ClearAllBatchedCalls();
         StopAllCoroutines();
         StartCoroutine(GenerateDungeon());
     }
+
     private IEnumerator GenerateDungeon()
     {
         //Reset random number generator.
@@ -56,7 +61,8 @@ public class DungeonGenerator : MonoBehaviour
 
         //Generate the starting point of the dungeon.
         dungeonWrapper.origin = new BTEntry(null, new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y));
-        
+        dungeonWrapper.dungeonStatus = DungeonWrapper.DungeonStatus.Empty;
+
         //Start the dungeon generation loop, starting at the starting point of the dungeon.
         BTEntry currentBTEntry;
         currentBTEntry = dungeonWrapper.origin;
@@ -75,8 +81,10 @@ public class DungeonGenerator : MonoBehaviour
 
             //Delay the algorithm and draw the room.
             yield return new WaitForSeconds(executionDelay);
-            DrawRoom(currentBTEntry, Color.yellow);
-
+            if (drawDungeonGeneration)
+            {
+                DrawRoom(currentBTEntry, Color.yellow);
+            }
 
             //Check if the current entry can be divided into smaller rooms. If not, mark as completed.
             if (currentBTEntry.room.width < roomMinSize.x * 2 && currentBTEntry.room.height < roomMinSize.y * 2)
@@ -109,6 +117,9 @@ public class DungeonGenerator : MonoBehaviour
             //Split current room into two.
             currentBTEntry = SplitRoom(currentBTEntry);
         }
+
+        //Mark the current generation step as completed, so that future algorithms can wait with executing until this step is completed.
+        dungeonWrapper.dungeonStatus = DungeonWrapper.DungeonStatus.RoomsCompleted;
     }
 
     private void DrawRoom(BTEntry currentBTEntry, Color color)
@@ -121,10 +132,14 @@ public class DungeonGenerator : MonoBehaviour
     private void CompleteRoom(BTEntry currentBTEntry)
     {
         currentBTEntry.complete = BTEntry.BTEntryStatus.Complete;
+        //Leafs are used by future algorithms
         currentBTEntry.leaf = true;
         //Make the room 1 unit larger in every direction to allow the rooms to overlap for future algorithms.
         currentBTEntry.room = new RectInt(currentBTEntry.room.position.x - 1, currentBTEntry.room.position.y - 1, currentBTEntry.room.width + 2, currentBTEntry.room.height + 2);
-        DrawRoom(currentBTEntry, Color.red);
+        if (drawRooms)
+        {
+            DrawRoom(currentBTEntry, Color.red);
+        }
     }
 
     private BTEntry SplitRoom(BTEntry currentBTEntry)

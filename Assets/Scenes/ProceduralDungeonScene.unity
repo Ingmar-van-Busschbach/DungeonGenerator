@@ -129,7 +129,7 @@ GameObject:
   m_Component:
   - component: {fileID: 96270176}
   - component: {fileID: 96270177}
-  - component: {fileID: 96270175}
+  - component: {fileID: 96270178}
   m_Layer: 0
   m_Name: DungeonGenerator
   m_TagString: Untagged
@@ -137,26 +137,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &96270175
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 96270174}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ee660a2a5778dc48ac01f61c7846199, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  dungeonSize: {x: 150, y: 250}
-  roomMinSize: {x: 25, y: 25}
-  splitDirectionBias: 0.57
-  roomMaxSize: {x: 75, y: 75}
-  largeRoomChance: 0.559
-  seed: 40
-  generateOnStart: 1
-  executionDelay: 0.0304
 --- !u!4 &96270176
 Transform:
   m_ObjectHideFlags: 0
@@ -184,6 +164,73 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b6a8be5706669347ba2bb80dd200620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dungeonStatus: 0
+--- !u!114 &96270178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96270174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ee660a2a5778dc48ac01f61c7846199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonSize: {x: 150, y: 250}
+  seed: 40
+  roomMinSize: {x: 25, y: 25}
+  splitDirectionBias: 0.57
+  roomMaxSize: {x: 75, y: 75}
+  largeRoomChance: 0.56
+  generateOnStart: 1
+  executionDelay: 0.04
+  drawDungeonGeneration: 1
+  drawRooms: 1
+--- !u!1 &199572663
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 199572665}
+  - component: {fileID: 199572664}
+  m_Layer: 0
+  m_Name: DebugDrawingBatcher_default
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &199572664
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199572663}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df3255f6be1dc4147ada123a18a52e4a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &199572665
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199572663}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -380,3 +427,4 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 96270176}
+  - {fileID: 199572665}

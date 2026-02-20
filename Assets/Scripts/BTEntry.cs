@@ -2,8 +2,10 @@
 public class BTEntry
 {
     public enum BTEntryStatus { Complete, MissingLeft, MissingRight, MissingBoth }
+
     public RectInt room;
     public BTEntryStatus complete = BTEntryStatus.MissingBoth;
+    [Tooltip("Leafs are the rooms without any child rooms")]
     public bool leaf = false;
     public BTEntry parent;
     public BTEntry left;
@@ -19,20 +21,12 @@ public class BTEntry
         }
         if (parent.right == null)
         {
-            parent.SetRightEntry(this);
+            parent.right = this;
         }
         else if (parent.left == null)
         {
-            parent.SetLeftEntry(this);
+            parent.left = this;
         }
-    }
-    public void SetLeftEntry(BTEntry left)
-    {
-        this.left = left;
-    }
-    public void SetRightEntry(BTEntry right)
-    {
-        this.right = right;
     }
     public void CheckComplete()
     {
