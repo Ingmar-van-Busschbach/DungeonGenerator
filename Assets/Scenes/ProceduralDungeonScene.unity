@@ -128,6 +128,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 96270176}
+  - component: {fileID: 96270177}
   - component: {fileID: 96270175}
   m_Layer: 0
   m_Name: DungeonGenerator
@@ -150,12 +151,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dungeonSize: {x: 150, y: 250}
   roomMinSize: {x: 25, y: 25}
-  splitDirectionBias: 0.3
-  roomMaxSize: {x: 60, y: 60}
-  largeRoomChance: 0.3
+  splitDirectionBias: 0.57
+  roomMaxSize: {x: 75, y: 75}
+  largeRoomChance: 0.559
   seed: 40
   generateOnStart: 1
-  executionDelay: 0
+  executionDelay: 0.0304
 --- !u!4 &96270176
 Transform:
   m_ObjectHideFlags: 0
@@ -171,6 +172,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &96270177
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96270174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b6a8be5706669347ba2bb80dd200620, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

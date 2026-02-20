@@ -2,6 +2,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(DungeonWrapper))]
 public class DungeonGenerator : MonoBehaviour
 {
     [Header("Dungeon Settings")]
@@ -30,12 +31,11 @@ public class DungeonGenerator : MonoBehaviour
     [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
     [Range(0, 0.1f)] [SerializeField] private float executionDelay = 0.04f;
 
-    private BTEntry originBTEntry;
     private System.Random numberGenerator;
-
+    private DungeonWrapper dungeonWrapper;
     private void Start()
     {
-        numberGenerator = new System.Random(seed);
+        dungeonWrapper = GetComponent<DungeonWrapper>();
         if (generateOnStart)
         {
             StartCoroutine(GenerateDungeon());
@@ -47,18 +47,20 @@ public class DungeonGenerator : MonoBehaviour
     {
         DebugDrawingBatcher.GetInstance().ClearAllBatchedCalls();
         StopAllCoroutines();
-        numberGenerator = new System.Random(seed);
         StartCoroutine(GenerateDungeon());
     }
     private IEnumerator GenerateDungeon()
     {
+        //Reset random number generator.
+        numberGenerator = new System.Random(seed);
+
         //Generate the starting point of the dungeon.
-        originBTEntry = new BTEntry(null, new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y));
+        dungeonWrapper.origin = new BTEntry(null, new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y));
         
         //Start the dungeon generation loop, starting at the starting point of the dungeon.
         BTEntry currentBTEntry;
-        currentBTEntry = originBTEntry;
-        while (originBTEntry.complete != BTEntry.BTEntryStatus.Complete)
+        currentBTEntry = dungeonWrapper.origin;
+        while (dungeonWrapper.origin.complete != BTEntry.BTEntryStatus.Complete)
         {
             //Check if we completed the current entry since the last cycle. If we did, loop back to the parent.
             if (currentBTEntry.complete != BTEntry.BTEntryStatus.Complete)
@@ -97,7 +99,7 @@ public class DungeonGenerator : MonoBehaviour
             //Random chance to have larger rooms within the generated dungeon.
             if (currentBTEntry.room.width < roomMaxSize.x && currentBTEntry.room.height < roomMaxSize.y)
             {
-                if ((float)(numberGenerator.Next(1, 100) / 100) < largeRoomChance)
+                if (numberGenerator.NextDouble() < largeRoomChance)
                 {
                     CompleteRoom(currentBTEntry);
                     continue;
@@ -128,7 +130,7 @@ public class DungeonGenerator : MonoBehaviour
     private BTEntry SplitRoom(BTEntry currentBTEntry)
     {
         //Randomly select whether to attempt to horizontally or vertically split first, then attempt splitting that way if the room is large enough.
-        if ((float)(numberGenerator.Next(1, 100) / 100) < splitDirectionBias)
+        if (numberGenerator.NextDouble() < splitDirectionBias)
         {
             if (currentBTEntry.room.width >= roomMinSize.x * 2)
             {
