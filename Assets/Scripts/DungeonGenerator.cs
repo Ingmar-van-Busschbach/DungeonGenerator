@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(DungeonWrapper))]
@@ -134,6 +135,8 @@ public class DungeonGenerator : MonoBehaviour
             //Split current room into two.
             currentBTEntry = SplitRoom(currentBTEntry);
         }
+        //When we finish generating, we convert the binary tree to an array.
+        ConvertBinaryTreeToList();
 
         //Mark the current generation step as completed, so that future algorithms can wait with executing until this step is completed.
         WriteDebug("Room generation complete. " + roomCount + " rooms generated successfullly, in " + (Time.time - time) + " Seconds.");
@@ -201,6 +204,21 @@ public class DungeonGenerator : MonoBehaviour
         currentBTEntry.right = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y, currentBTEntry.room.width, splitPointY));
         currentBTEntry.left = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y + splitPointY, currentBTEntry.room.width, currentBTEntry.room.height - splitPointY));
         return currentBTEntry.right;
+    }
+
+    private void ConvertBinaryTreeToList()
+    {
+        WriteDebug("Converting binary tree to list...");
+        AddLeafsToList(dungeonWrapper.origin);
+        WriteDebug("Added " + dungeonWrapper.rooms.Count + " rooms into list.");
+    }
+
+
+    private void AddLeafsToList (BTEntry currentBTEntry)
+    {
+        if (currentBTEntry.leaf) dungeonWrapper.rooms.Add (currentBTEntry);
+        if (currentBTEntry.left != null) AddLeafsToList(currentBTEntry.left);
+        if (currentBTEntry.right != null) AddLeafsToList(currentBTEntry.right);
     }
 
     private void WriteDebug(object message)

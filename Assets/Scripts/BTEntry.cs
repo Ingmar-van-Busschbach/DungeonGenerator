@@ -7,6 +7,7 @@ public class BTEntry
     public BTEntryStatus complete = BTEntryStatus.MissingBoth;
     [Tooltip("Leafs are the rooms without any child rooms")]
     public bool leaf = false;
+    public bool inList = false;
     public BTEntry parent;
     public BTEntry left;
     public BTEntry right;
