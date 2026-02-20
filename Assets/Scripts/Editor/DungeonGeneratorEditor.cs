@@ -8,9 +8,12 @@ public class DungeonGeneratorEditor : Editor
     {
         DrawDefaultInspector();
         DungeonGenerator dungeonGenerator = (DungeonGenerator)target;
-        if (GUILayout.Button("Generate Dungeon"))
+        if (Application.isPlaying)
         {
-            dungeonGenerator.StartGeneration();
+            if (GUILayout.Button("Generate Rooms"))
+            {
+                dungeonGenerator.StartGeneration();
+            }
         }
     }
 }

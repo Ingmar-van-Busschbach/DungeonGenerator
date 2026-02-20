@@ -8,11 +8,21 @@ public class DungeonWrapperEditor : Editor
     {
         DrawDefaultInspector();
         DungeonWrapper dungeonWrapper = (DungeonWrapper)target;
-        if (dungeonWrapper.gameObject.TryGetComponent<DungeonGenerator>(out DungeonGenerator dungeonGenerator))
+        if (Application.isPlaying)
         {
-            if (GUILayout.Button("Generate Dungeon"))
+            if (dungeonWrapper.gameObject.TryGetComponent<DungeonGenerator>(out DungeonGenerator dungeonGenerator))
             {
-                dungeonGenerator.StartGeneration();
+                if (GUILayout.Button("Generate Rooms"))
+                {
+                    dungeonGenerator.StartGeneration();
+                }
+            }
+            if (dungeonWrapper.gameObject.TryGetComponent<DoorGenerator>(out DoorGenerator doorGenerator))
+            {
+                if (GUILayout.Button("Generate Doors"))
+                {
+                    doorGenerator.StartGeneration();
+                }
             }
         }
     }
