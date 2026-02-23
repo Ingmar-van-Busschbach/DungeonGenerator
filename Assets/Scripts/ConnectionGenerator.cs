@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
-using System.Runtime.CompilerServices;
 
 public class ConnectionGenerator : MonoBehaviour
 {
@@ -24,7 +23,6 @@ public class ConnectionGenerator : MonoBehaviour
     [SerializeField] private bool drawConnections = true;
 
     private DungeonWrapper dungeonWrapper;
-    private List<RoomWrapper> rooms;
 
 
     private void Start()
@@ -34,12 +32,9 @@ public class ConnectionGenerator : MonoBehaviour
 
     public void StartGeneration()
     {
-        if (dungeonWrapper.dungeonStatus == DungeonWrapper.DungeonStatus.DoorsCompleted)
-        {
-            ClearDrawingBatchers();
-            StopAllCoroutines();
-            StartCoroutine(GenerateConnections());
-        }
+        ClearDrawingBatchers();
+        StopAllCoroutines();
+        StartCoroutine(GenerateConnections());
     }
 
     private void ClearDrawingBatchers()
@@ -50,10 +45,14 @@ public class ConnectionGenerator : MonoBehaviour
     private IEnumerator GenerateConnections()
     {
         WriteDebug("Starting connection generation...");
-        rooms = dungeonWrapper.rooms;
-        rooms.Sort((s1, s2) => s1.room.size.magnitude.CompareTo(s2.room.size.magnitude));
-        rooms = ReduceRooms(rooms);
-        foreach(RoomWrapper room in dungeonWrapper.rooms)
+        dungeonWrapper.reducedRooms = new();
+        foreach (RoomWrapper room in dungeonWrapper.rooms)
+        {
+            dungeonWrapper.reducedRooms.Add(room);
+        }
+        dungeonWrapper.reducedRooms.Sort((s1, s2) => s1.room.size.magnitude.CompareTo(s2.room.size.magnitude));
+        dungeonWrapper.reducedRooms = ReduceRooms(dungeonWrapper.reducedRooms);
+        foreach(RoomWrapper room in dungeonWrapper.reducedRooms)
         {
             if (executionDelay > 0)
             {
@@ -67,7 +66,6 @@ public class ConnectionGenerator : MonoBehaviour
                 }
             }
         }
-        rooms = null;
         dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.ConnectionsCompleted);
     }
 
@@ -77,7 +75,7 @@ public class ConnectionGenerator : MonoBehaviour
         int removeCount = 0;
         for(int i = 0; i < rooms.Count; i++)
         {
-            if(removeCount > removeAmount)
+            if(removeCount >= removeAmount)
             {
                 WriteDebug("Successfully removed " + removeCount + " rooms due to being too small");
                 break;
@@ -126,7 +124,7 @@ public class ConnectionGenerator : MonoBehaviour
 
     private void DrawConnection(Vector2 start, Vector2 end)
     {
-        DebugDrawingBatcher.GetInstance("Connections").BatchCall(() => Debug.DrawLine(new Vector3(start.x, 0, start.y), new Vector3(end.x, 0, end.y), Color.green));
+        DebugDrawingBatcher.GetInstance("Connections").BatchCall(() => Debug.DrawLine(new Vector3(start.x, 0, start.y), new Vector3(end.x, 0, end.y), Color.green, 0));
     }
 
     private void WriteDebug(object message)

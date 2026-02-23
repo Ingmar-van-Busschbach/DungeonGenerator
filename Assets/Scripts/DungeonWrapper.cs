@@ -5,6 +5,7 @@ public class DungeonWrapper : MonoBehaviour
 {
     public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, ConnectionsCompleted }
     public List<RoomWrapper> rooms = new();
+    public List<RoomWrapper> reducedRooms = new();
     public List<DoorWrapper> doors = new();
     public DungeonStatus dungeonStatus = DungeonStatus.Empty;
 

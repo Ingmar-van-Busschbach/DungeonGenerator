@@ -41,12 +41,9 @@ public class DoorGenerator : MonoBehaviour
 
     public void StartGeneration()
     {
-        if(dungeonWrapper.dungeonStatus == DungeonWrapper.DungeonStatus.RoomsCompleted)
-        {
-            ClearDrawingBatchers();
-            StopAllCoroutines();
-            StartCoroutine(GenerateDoors());
-        }
+        ClearDrawingBatchers();
+        StopAllCoroutines();
+        StartCoroutine(GenerateDoors());
     }
 
     private void ClearDrawingBatchers()

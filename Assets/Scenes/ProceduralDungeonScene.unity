@@ -166,7 +166,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b6a8be5706669347ba2bb80dd200620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  doors: []
   dungeonStatus: 0
 --- !u!114 &96270178
 MonoBehaviour:
@@ -223,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646751464022eaf4abc3b0ebc7501dd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeRatio: 0.267
+  removeRatio: 0.4
   autoGenerate: 1
   executionDelay: 0.02
   writeDebug: 1
