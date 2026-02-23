@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 using UnityEngine;
 
 /// <summary>
-/// O(0.5n^2 - 0.5n)
+/// Computational complexity: O(0.5n^2 - 0.5n), with n being the starting amount of rooms.
 /// </summary>
 
 [RequireComponent(typeof(DungeonWrapper))]
@@ -77,12 +77,17 @@ public class DoorGenerator : MonoBehaviour
                     {
                         currentDoor = VerticalDoor(currentDoor);
                     }
+                    //If a valid door could not be created due to not enough space in the room, discard this cycle.
                     if(currentDoor == new RectInt())
                     {
                         continue;
                     }
                     dungeonWrapper.doors.Add(currentDoor);
-                    
+                    dungeonWrapper.rooms[i].doors.Add(currentDoor);
+                    dungeonWrapper.rooms[j].doors.Add(currentDoor);
+                    dungeonWrapper.rooms[i].connectingRooms.Add(dungeonWrapper.rooms[j]);
+                    dungeonWrapper.rooms[j].connectingRooms.Add(dungeonWrapper.rooms[i]);
+
                     if (executionDelay > 0)
                     {
                         yield return new WaitForSeconds(executionDelay);

@@ -4,7 +4,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
-/// O(2n-1)
+/// Computational complexity: O(2n-1), with n being the amount of rooms generated. Theoretical limit of rooms generated is floor(DungeonWidth/minRoomWidth) * floor(DungeonHeight/minRoomHeight)
 /// </summary>
 [RequireComponent(typeof(DungeonWrapper))]
 public class DungeonGenerator : MonoBehaviour
