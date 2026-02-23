@@ -1,15 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// O(2n-1)
+/// </summary>
 [RequireComponent(typeof(DungeonWrapper))]
 public class DungeonGenerator : MonoBehaviour
 {
     [Header("Dungeon Settings")]
-    [Tooltip("Size of the whole dungeon in meters. X is width, Y is height.")]
-    [SerializeField] private Vector2 dungeonSize = new Vector2(150, 250);
     [Tooltip("Random number generator seed")]
     [Range(0, 100)][SerializeField] private int seed = 40;
+    [Tooltip("Size of the whole dungeon in meters. X is width, Y is height.")]
+    [SerializeField] private Vector2 dungeonSize = new Vector2(150, 250);
 
     [Space]
 
@@ -40,9 +44,8 @@ public class DungeonGenerator : MonoBehaviour
 
     private System.Random numberGenerator;
     private DungeonWrapper dungeonWrapper;
-    int roomCount;
-    float time;
-
+    float time; // Debug value. Shows the time needed to complete the generation.
+    int cycles; // Debug value. Shows the amount of cycles needed to complete the generation.
     private void Start()
     {
         dungeonWrapper = GetComponent<DungeonWrapper>();
@@ -71,152 +74,111 @@ public class DungeonGenerator : MonoBehaviour
         //Reset random number generator.
         numberGenerator = new System.Random(seed);
 
-        //Generate the starting point of the dungeon.
-        dungeonWrapper.origin = new BTEntry(null, new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y));
+        
         dungeonWrapper.dungeonStatus = DungeonWrapper.DungeonStatus.Empty;
 
         //Start the dungeon generation loop, starting at the starting point of the dungeon.
-        BTEntry currentBTEntry;
-        currentBTEntry = dungeonWrapper.origin;
-        roomCount = 0;
+        dungeonWrapper.rooms = new();
         time = Time.time;
+        cycles = 0;
         WriteDebug("Starting room genration...");
-        while (dungeonWrapper.origin.complete != BTEntry.BTEntryStatus.Complete)
-        {
-            //Check if we completed the current entry since the last cycle. If we did, loop back to the parent.
-            if (currentBTEntry.complete != BTEntry.BTEntryStatus.Complete)
-            {
-                currentBTEntry.CheckComplete();
-            }
-            if (currentBTEntry.complete == BTEntry.BTEntryStatus.Complete)
-            {
-                currentBTEntry = currentBTEntry.parent;
-                continue;
-            }
 
-            //Delay the algorithm and draw the room.
-            if(executionDelay > 0)
-            {
-                yield return new WaitForSeconds(executionDelay);
-            }
-            if (drawDungeonGeneration)
-            {
-                DrawRoom(currentBTEntry, Color.yellow, "Rooms");
-            }
+        //Generate the starting point of the dungeon, then recusively call the GenerateRoom function within itself to split the room into smaller rooms
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y))));
 
-            //Check if the current entry can be divided into smaller rooms. If not, mark as completed.
-            if (currentBTEntry.room.width < roomMinSize.x * 2 && currentBTEntry.room.height < roomMinSize.y * 2)
-            {
-                CompleteRoom(currentBTEntry);
-                continue;
-            }
-            //Select left room if generation was already done on the right branch but not on the left.
-            if (currentBTEntry.right != null)
-            {
-                if (currentBTEntry.right.complete == BTEntry.BTEntryStatus.Complete && currentBTEntry.left.complete != BTEntry.BTEntryStatus.Complete)
-                {
-                    currentBTEntry = currentBTEntry.left;
-                    continue;
-                }
-            }
-
-            //We have found a Binary Tree Entry to split into two rooms or complete as a large room.
-
-            //Random chance to have larger rooms within the generated dungeon.
-            if (currentBTEntry.room.width < roomMaxSize.x && currentBTEntry.room.height < roomMaxSize.y)
-            {
-                if (numberGenerator.NextDouble() < largeRoomChance)
-                {
-                    CompleteRoom(currentBTEntry);
-                    continue;
-                }
-            }
-
-            //Split current room into two.
-            currentBTEntry = SplitRoom(currentBTEntry);
-        }
-        //When we finish generating, we convert the binary tree to an array.
-        ConvertBinaryTreeToList();
-
-        //Mark the current generation step as completed, so that future algorithms can wait with executing until this step is completed.
-        WriteDebug("Room generation complete. " + roomCount + " rooms generated successfullly, in " + (Time.time - time) + " Seconds.");
-        dungeonWrapper.dungeonStatus = DungeonWrapper.DungeonStatus.RoomsCompleted;
+        WriteDebug("Room generation complete. " + dungeonWrapper.rooms.Count + " rooms generated successfullly, in " + cycles + " cycles, spanning " + (Time.time - time) + " seconds.");
+        dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.RoomsCompleted);
     }
 
-    private void DrawRoom(BTEntry currentBTEntry, Color color, string debugDrawer = "default")
+    private IEnumerator CheckRoomComplete(RoomWrapper currentRoom)
+    {
+        cycles++;
+        if (currentRoom.room.width < roomMinSize.x * 2 && currentRoom.room.height < roomMinSize.y * 2)
+        {
+            CompleteRoom(currentRoom);
+            yield break;
+        }
+        //Random chance to have larger rooms within the generated dungeon.
+        if (currentRoom.room.width < roomMaxSize.x && currentRoom.room.height < roomMaxSize.y)
+        {
+            if (numberGenerator.NextDouble() < largeRoomChance)
+            {
+                CompleteRoom(currentRoom);
+                yield break;
+            }
+        }
+        //We have found a room that we want to split
+
+        //Delay execution and draw the parent room
+        if (executionDelay > 0)
+        {
+            yield return new WaitForSeconds(executionDelay);
+        }
+        if (drawDungeonGeneration)
+        {
+            DrawRoom(currentRoom, Color.yellow, "Rooms");
+        }
+
+        yield return StartCoroutine(SplitRoom(currentRoom));
+    }
+
+    private void DrawRoom(RoomWrapper currentRoom, Color color, string debugDrawer = "default")
     {
         //Debug Drawing Batcher must use a value instead of a reference, so it cannot use currentBTEntry.room data as that is a reference type.
-        RectInt room = currentBTEntry.room;
+        RectInt room = currentRoom.room;
         DebugDrawingBatcher.GetInstance(debugDrawer).BatchCall(() => AlgorithmsUtils.DebugRectInt(room, color));
     }
 
-    private void CompleteRoom(BTEntry currentBTEntry)
+    private void CompleteRoom(RoomWrapper currentRoom)
     {
-        currentBTEntry.complete = BTEntry.BTEntryStatus.Complete;
-        currentBTEntry.leaf = true;
-        roomCount++;
+        dungeonWrapper.rooms.Add(currentRoom);
         //Make the room 1 unit larger in every direction to allow the rooms to overlap for future algorithms.
-        currentBTEntry.room = new RectInt(currentBTEntry.room.position.x - 1, currentBTEntry.room.position.y - 1, currentBTEntry.room.width + 2, currentBTEntry.room.height + 2);
+        currentRoom.room = new RectInt(currentRoom.room.position.x - 1, currentRoom.room.position.y - 1, currentRoom.room.width + 2, currentRoom.room.height + 2);
         if (drawRooms)
         {
-            DrawRoom(currentBTEntry, Color.red, "Leafs");
+            DrawRoom(currentRoom, Color.red, "Leafs");
         }
     }
 
-    private BTEntry SplitRoom(BTEntry currentBTEntry)
+    private IEnumerator SplitRoom(RoomWrapper currentRoom)
     {
         //Randomly select whether to attempt to horizontally or vertically split first, then attempt splitting that way if the room is large enough.
         if (numberGenerator.NextDouble() < splitDirectionBias)
         {
-            if (currentBTEntry.room.width >= roomMinSize.x * 2)
+            if (currentRoom.room.width >= roomMinSize.x * 2)
             {
-                return SplitHorizontally(currentBTEntry);
+                yield return StartCoroutine(SplitHorizontally(currentRoom));
             }
             else
             {
-                return SplitVertically(currentBTEntry);
+                yield return StartCoroutine(SplitVertically(currentRoom));
             }
         }
         else
         {
-            if (currentBTEntry.room.height >= roomMinSize.y * 2)
+            if (currentRoom.room.height >= roomMinSize.y * 2)
             {
-                return SplitVertically(currentBTEntry);
+                yield return StartCoroutine(SplitVertically(currentRoom));
             }
             else
             {
-                return SplitHorizontally(currentBTEntry);
+                yield return StartCoroutine(SplitHorizontally(currentRoom));
             }
         }
     }
-    
-    private BTEntry SplitHorizontally(BTEntry currentBTEntry)
+
+    private IEnumerator SplitHorizontally(RoomWrapper currentRoom)
     {
-        int splitPointX = numberGenerator.Next((int)roomMinSize.x, (int)(currentBTEntry.room.width - roomMinSize.x));
-        currentBTEntry.right = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y, splitPointX, currentBTEntry.room.height));
-        currentBTEntry.left = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x + splitPointX, currentBTEntry.room.position.y, currentBTEntry.room.width - splitPointX, currentBTEntry.room.height));
-        return currentBTEntry.right;
+        int splitPointX = numberGenerator.Next((int)roomMinSize.x, (int)(currentRoom.room.width - roomMinSize.x));
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y, splitPointX, currentRoom.room.height))));
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x + splitPointX, currentRoom.room.position.y, currentRoom.room.width - splitPointX, currentRoom.room.height))));
     }
 
-    private BTEntry SplitVertically(BTEntry currentBTEntry)
+    private IEnumerator SplitVertically(RoomWrapper currentRoom)
     {
-        int splitPointY = numberGenerator.Next((int)roomMinSize.y, (int)(currentBTEntry.room.height - roomMinSize.y));
-        currentBTEntry.right = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y, currentBTEntry.room.width, splitPointY));
-        currentBTEntry.left = new BTEntry(currentBTEntry, new RectInt(currentBTEntry.room.position.x, currentBTEntry.room.position.y + splitPointY, currentBTEntry.room.width, currentBTEntry.room.height - splitPointY));
-        return currentBTEntry.right;
-    }
-
-    private void ConvertBinaryTreeToList()
-    {
-        AddLeafsToList(dungeonWrapper.origin);
-    }
-
-
-    private void AddLeafsToList (BTEntry currentBTEntry)
-    {
-        if (currentBTEntry.leaf) dungeonWrapper.rooms.Add (currentBTEntry);
-        if (currentBTEntry.left != null) AddLeafsToList(currentBTEntry.left);
-        if (currentBTEntry.right != null) AddLeafsToList(currentBTEntry.right);
+        int splitPointY = numberGenerator.Next((int)roomMinSize.y, (int)(currentRoom.room.height - roomMinSize.y));
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y, currentRoom.room.width, splitPointY))));
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y + splitPointY, currentRoom.room.width, currentRoom.room.height - splitPointY))));
     }
 
     private void WriteDebug(object message)
