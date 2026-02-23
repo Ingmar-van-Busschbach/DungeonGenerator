@@ -15,8 +15,10 @@ public class DoorGenerator : MonoBehaviour
     [SerializeField] private int doorMaxSize = 10;
     [SerializeField] private int minDistanceFromWalls = 2;
 
+    [Space]
+
     [Header("Algorithm")]
-    [Tooltip("Whether to start generating a dungeon on Start, or to wait for the Generate Dungeon button to be pressed.")]
+    [Tooltip("Whether to start generating rooms on Start, or to wait for the Generate Room button to be pressed.")]
     public bool autoGenerate = true;
     [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
     [Range(0, 0.1f)][SerializeField] private float executionDelay = 0.02f;
@@ -50,6 +52,7 @@ public class DoorGenerator : MonoBehaviour
     private void ClearDrawingBatchers()
     {
         DebugDrawingBatcher.GetInstance("Doors").ClearAllBatchedCalls();
+        DebugDrawingBatcher.GetInstance("Connections").ClearAllBatchedCalls();
     }
 
     private IEnumerator GenerateDoors()
@@ -58,6 +61,8 @@ public class DoorGenerator : MonoBehaviour
         dungeonWrapper.doors = new();
         time = Time.time;
         cycles = 0;
+        WriteDebug("Starting door generation...");
+
         for (int i = 0; i < dungeonWrapper.rooms.Count; i++)
         {
             for(int j = i+1; j < dungeonWrapper.rooms.Count; j++)
@@ -82,11 +87,12 @@ public class DoorGenerator : MonoBehaviour
                     {
                         continue;
                     }
-                    dungeonWrapper.doors.Add(currentDoor);
-                    dungeonWrapper.rooms[i].doors.Add(currentDoor);
-                    dungeonWrapper.rooms[j].doors.Add(currentDoor);
-                    dungeonWrapper.rooms[i].connectingRooms.Add(dungeonWrapper.rooms[j]);
-                    dungeonWrapper.rooms[j].connectingRooms.Add(dungeonWrapper.rooms[i]);
+                    DoorWrapper newDoor = new DoorWrapper(currentDoor);
+                    newDoor.connectingRooms.Add(dungeonWrapper.rooms[i]);
+                    newDoor.connectingRooms.Add(dungeonWrapper.rooms[j]);
+                    dungeonWrapper.doors.Add(newDoor);
+                    dungeonWrapper.rooms[i].doors.Add(newDoor);
+                    dungeonWrapper.rooms[j].doors.Add(newDoor);
 
                     if (executionDelay > 0)
                     {

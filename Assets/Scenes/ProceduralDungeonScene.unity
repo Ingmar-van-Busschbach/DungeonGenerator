@@ -131,6 +131,7 @@ GameObject:
   - component: {fileID: 96270177}
   - component: {fileID: 96270178}
   - component: {fileID: 96270179}
+  - component: {fileID: 96270180}
   m_Layer: 0
   m_Name: DungeonGenerator
   m_TagString: Untagged
@@ -176,7 +177,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 96270174}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ee660a2a5778dc48ac01f61c7846199, type: 3}
+  m_Script: {fileID: 11500000, guid: d94491caa48e3ae4fbfe23169b5f5ef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   seed: 40
@@ -186,7 +187,7 @@ MonoBehaviour:
   roomMaxSize: {x: 60, y: 60}
   largeRoomChance: 0.57
   generateOnStart: 1
-  executionDelay: 0.01
+  executionDelay: 0.02
   writeDebug: 1
   drawDungeonGeneration: 1
   drawRooms: 1
@@ -210,6 +211,23 @@ MonoBehaviour:
   executionDelay: 0.01
   writeDebug: 1
   drawDoors: 1
+--- !u!114 &96270180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96270174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 646751464022eaf4abc3b0ebc7501dd2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  removeRatio: 0.267
+  autoGenerate: 1
+  executionDelay: 0.02
+  writeDebug: 1
+  drawConnections: 1
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

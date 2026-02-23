@@ -10,18 +10,25 @@ public class DungeonWrapperEditor : Editor
         DungeonWrapper dungeonWrapper = (DungeonWrapper)target;
         if (Application.isPlaying)
         {
-            if (dungeonWrapper.gameObject.TryGetComponent<DungeonGenerator>(out DungeonGenerator dungeonGenerator))
+            if (dungeonWrapper.gameObject.TryGetComponent(out RoomGenerator dungeonGenerator))
             {
                 if (GUILayout.Button("Generate Rooms"))
                 {
                     dungeonGenerator.StartGeneration();
                 }
             }
-            if (dungeonWrapper.gameObject.TryGetComponent<DoorGenerator>(out DoorGenerator doorGenerator))
+            if (dungeonWrapper.gameObject.TryGetComponent(out DoorGenerator doorGenerator))
             {
                 if (GUILayout.Button("Generate Doors"))
                 {
                     doorGenerator.StartGeneration();
+                }
+            }
+            if (dungeonWrapper.gameObject.TryGetComponent(out ConnectionGenerator connectionGenerator))
+            {
+                if (GUILayout.Button("Generate Connections"))
+                {
+                    connectionGenerator.StartGeneration();
                 }
             }
         }

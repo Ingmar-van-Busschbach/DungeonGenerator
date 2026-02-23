@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 public class DungeonWrapper : MonoBehaviour
 {
-    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted }
+    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, ConnectionsCompleted }
     public List<RoomWrapper> rooms = new();
-    public List<RectInt> doors = new();
+    public List<DoorWrapper> doors = new();
     public DungeonStatus dungeonStatus = DungeonStatus.Empty;
 
     public void ChangeDungeonStatus(DungeonStatus dungeonStatus)
@@ -23,6 +23,15 @@ public class DungeonWrapper : MonoBehaviour
                 }
                 break;
             case DungeonStatus.DoorsCompleted:
+                if (TryGetComponent(out ConnectionGenerator connectionGenerator))
+                {
+                    if (connectionGenerator.autoGenerate)
+                    {
+                        connectionGenerator.StartGeneration();
+                    }
+                }
+                break;
+            case DungeonStatus.ConnectionsCompleted:
                 Debug.Log("Dungeon generation complete");
                 break;
         }

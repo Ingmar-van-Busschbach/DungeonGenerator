@@ -1,13 +1,13 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-[CustomEditor(typeof(DungeonGenerator))]
-public class DungeonGeneratorEditor : Editor
+[CustomEditor(typeof(RoomGenerator))]
+public class RoomGeneratorEditor : Editor
 {
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        DungeonGenerator dungeonGenerator = (DungeonGenerator)target;
+        RoomGenerator dungeonGenerator = (RoomGenerator)target;
         if (Application.isPlaying)
         {
             if (GUILayout.Button("Generate Rooms"))

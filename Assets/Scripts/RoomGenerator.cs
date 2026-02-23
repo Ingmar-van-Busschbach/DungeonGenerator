@@ -7,7 +7,7 @@ using UnityEngine;
 /// Computational complexity: O(2n-1), with n being the amount of rooms generated. Theoretical limit of rooms generated is floor(DungeonWidth/minRoomWidth) * floor(DungeonHeight/minRoomHeight)
 /// </summary>
 [RequireComponent(typeof(DungeonWrapper))]
-public class DungeonGenerator : MonoBehaviour
+public class RoomGenerator : MonoBehaviour
 {
     [Header("Dungeon Settings")]
     [Tooltip("Random number generator seed")]
@@ -67,6 +67,7 @@ public class DungeonGenerator : MonoBehaviour
         DebugDrawingBatcher.GetInstance("Rooms").ClearAllBatchedCalls();
         DebugDrawingBatcher.GetInstance("Leafs").ClearAllBatchedCalls();
         DebugDrawingBatcher.GetInstance("Doors").ClearAllBatchedCalls();
+        DebugDrawingBatcher.GetInstance("Connections").ClearAllBatchedCalls();
     }
 
     private IEnumerator GenerateDungeon()
@@ -81,7 +82,7 @@ public class DungeonGenerator : MonoBehaviour
         dungeonWrapper.rooms = new();
         time = Time.time;
         cycles = 0;
-        WriteDebug("Starting room genration...");
+        WriteDebug("Starting room generation...");
 
         //Generate the starting point of the dungeon, then recusively call the GenerateRoom function within itself to split the room into smaller rooms
         yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y))));
