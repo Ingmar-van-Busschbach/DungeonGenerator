@@ -1,6 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 /// <summary>
@@ -31,9 +29,9 @@ public class RoomGenerator : MonoBehaviour
 
     [Header("Algorithm")]
     [Tooltip("Whether to start generating a dungeon on Start, or to wait for the Generate Dungeon button to be pressed.")]
-    [SerializeField] private bool generateOnStart = true;
+    public bool generateOnStart = true;
     [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)] [SerializeField] private float executionDelay = 0.02f;
+    [Range(0, 0.1f)] public float executionDelay = 0.02f;
 
     [Space]
 
@@ -88,7 +86,7 @@ public class RoomGenerator : MonoBehaviour
         yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y))));
 
         WriteDebug("Room generation complete. " + dungeonWrapper.rooms.Count + " rooms generated successfullly, in " + cycles + " cycles, spanning " + (Time.time - time) + " seconds.");
-        dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.RoomsCompleted);
+        StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.RoomsCompleted));
     }
 
     private IEnumerator CheckRoomComplete(RoomWrapper currentRoom)

@@ -14,7 +14,7 @@ public class ConnectionGenerator : MonoBehaviour
     [Tooltip("Whether to start generating connections on Start, or to wait for the Generate Connections button to be pressed.")]
     public bool autoGenerate = true;
     [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)][SerializeField] private float executionDelay = 0.02f;
+    [Range(0, 0.1f)] public float executionDelay = 0.02f;
 
     [Space]
 
@@ -66,7 +66,7 @@ public class ConnectionGenerator : MonoBehaviour
                 }
             }
         }
-        dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.ConnectionsCompleted);
+        StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.ConnectionsCompleted));
     }
 
     private List<RoomWrapper> ReduceRooms(List<RoomWrapper> rooms)

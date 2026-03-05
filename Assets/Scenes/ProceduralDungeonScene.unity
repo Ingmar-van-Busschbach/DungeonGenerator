@@ -166,6 +166,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b6a8be5706669347ba2bb80dd200620, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  globalAutoGenerate: 1
+  executionDelayType: 1
+  globalExecutionDelay: 0.01
   dungeonStatus: 0
 --- !u!114 &96270178
 MonoBehaviour:
@@ -186,7 +189,7 @@ MonoBehaviour:
   roomMaxSize: {x: 60, y: 60}
   largeRoomChance: 0.57
   generateOnStart: 1
-  executionDelay: 0.02
+  executionDelay: 0
   writeDebug: 1
   drawDungeonGeneration: 1
   drawRooms: 1
@@ -207,7 +210,7 @@ MonoBehaviour:
   doorMaxSize: 10
   minDistanceFromWalls: 2
   autoGenerate: 1
-  executionDelay: 0.01
+  executionDelay: 0
   writeDebug: 1
   drawDoors: 1
 --- !u!114 &96270180
@@ -222,9 +225,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646751464022eaf4abc3b0ebc7501dd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeRatio: 0.4
+  removeRatio: 0
   autoGenerate: 1
-  executionDelay: 0.02
+  executionDelay: 0
   writeDebug: 1
   drawConnections: 1
 --- !u!1 &330585543
