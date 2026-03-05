@@ -4,7 +4,7 @@ public class RoomWrapper
 {
     public RectInt room;
     public List<DoorWrapper> doors = new();
-    public bool pendingDeletion;
+    public bool pendingDeletion = false;
 
     public RoomWrapper(RectInt room)
     {

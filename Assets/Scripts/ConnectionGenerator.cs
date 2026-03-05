@@ -80,7 +80,7 @@ public class ConnectionGenerator : MonoBehaviour
                 WriteDebug("Successfully removed " + removeCount + " rooms due to being too small");
                 break;
             }
-            if (!CheckLastConnection(rooms[i]))
+            if (CanRemoveRoom(rooms[i], rooms[rooms.Count-1], rooms))
             {
                 removeCount++;
                 RemoveRoom(rooms, rooms[i]);
@@ -105,21 +105,29 @@ public class ConnectionGenerator : MonoBehaviour
         rooms.Remove(room);
     }
 
-    private bool CheckLastConnection(RoomWrapper room)
+    private bool CanRemoveRoom(RoomWrapper room, RoomWrapper largestRoom, List<RoomWrapper> rooms)
     {
-        bool lastConnection = false;
-        foreach(DoorWrapper door in room.doors)
+        List<RoomWrapper> connections = new();
+        room.pendingDeletion = true;
+        HasConnectingRoom(largestRoom, connections);
+        room.pendingDeletion = false;
+        Debug.Log(connections.Count + "/" + (rooms.Count-1));
+        return connections.Count == rooms.Count - 1;
+    }
+
+    private void HasConnectingRoom(RoomWrapper room, List<RoomWrapper> connections)
+    {
+        if (!connections.Contains(room) && !room.pendingDeletion)
         {
-            foreach (RoomWrapper connectingRoom in door.connectingRooms)
+            connections.Add(room);
+            foreach(DoorWrapper door in room.doors)
             {
-                if (connectingRoom.doors.Count <= 1)
+                foreach(RoomWrapper connectingRoom in door.connectingRooms)
                 {
-                    lastConnection = true;
-                    break;
+                    HasConnectingRoom(connectingRoom, connections);
                 }
             }
         }
-        return lastConnection;
     }
 
     private void DrawConnection(Vector2 start, Vector2 end)
