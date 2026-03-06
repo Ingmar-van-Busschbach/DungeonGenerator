@@ -42,7 +42,6 @@ public class RoomGenerator : MonoBehaviour
 
     private System.Random numberGenerator;
     private DungeonWrapper dungeonWrapper;
-    float time; // Debug value. Shows the time needed to complete the generation.
     int cycles; // Debug value. Shows the amount of cycles needed to complete the generation.
     private void Start()
     {
@@ -70,22 +69,23 @@ public class RoomGenerator : MonoBehaviour
 
     private IEnumerator GenerateDungeon()
     {
+        //Start execution timer
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        float time = Time.time;
         //Reset random number generator.
         numberGenerator = new System.Random(seed);
 
-        
         dungeonWrapper.dungeonStatus = DungeonWrapper.DungeonStatus.Empty;
 
         //Start the dungeon generation loop, starting at the starting point of the dungeon.
         dungeonWrapper.rooms = new();
-        time = Time.time;
         cycles = 0;
         WriteDebug("Starting room generation...");
 
         //Generate the starting point of the dungeon, then recusively call the GenerateRoom function within itself to split the room into smaller rooms
         yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(0, 0, (int)dungeonSize.x, (int)dungeonSize.y))));
 
-        WriteDebug("Room generation complete. " + dungeonWrapper.rooms.Count + " rooms generated successfullly, in " + cycles + " cycles, spanning " + (Time.time - time) + " seconds.");
+        WriteDebug("Room generation complete. " + dungeonWrapper.rooms.Count + " rooms generated successfullly, in " + cycles + " cycles, spanning " + (executionDelay > 0 ? ((Time.time - time)) + " seconds." : (stopwatch.ElapsedMilliseconds + "ms.")));
         StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.RoomsCompleted));
     }
 

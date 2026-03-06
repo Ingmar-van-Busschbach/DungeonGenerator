@@ -31,8 +31,6 @@ public class DoorGenerator : MonoBehaviour
 
     private System.Random numberGenerator;
     private DungeonWrapper dungeonWrapper;
-    private float time; // Debug value. Shows the time needed to complete the generation.
-    private int cycles; // Debug value. Shows the amount of cycles needed to complete the generation.
 
     private void Start()
     {
@@ -54,10 +52,13 @@ public class DoorGenerator : MonoBehaviour
 
     private IEnumerator GenerateDoors()
     {
+        //Start execution timer
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        float time = Time.time;
         numberGenerator = new System.Random(seed);
         dungeonWrapper.doors = new();
-        time = Time.time;
-        cycles = 0;
+        
+        int cycles = 0;
         WriteDebug("Starting door generation...");
 
         for (int i = 0; i < dungeonWrapper.rooms.Count; i++)
@@ -104,7 +105,7 @@ public class DoorGenerator : MonoBehaviour
                 
             }
         }
-        WriteDebug("Door generation complete. " + dungeonWrapper.doors.Count + " doors generated successfullly, in " + cycles + " cycles, spanning " + (Time.time - time) + " seconds.");
+        WriteDebug("Door generation complete. " + dungeonWrapper.doors.Count + " doors generated successfullly, in " + cycles + " cycles, spanning " + (executionDelay > 0 ? ((Time.time - time)) + " seconds." : (stopwatch.ElapsedMilliseconds + "ms.")));
         StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.DoorsCompleted));
     }
 

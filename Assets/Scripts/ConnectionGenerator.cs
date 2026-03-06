@@ -44,6 +44,9 @@ public class ConnectionGenerator : MonoBehaviour
 
     private IEnumerator GenerateConnections()
     {
+        //Start execution timer
+        System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
+        float time = Time.time;
         WriteDebug("Starting connection generation...");
         dungeonWrapper.reducedRooms = new();
         foreach (RoomWrapper room in dungeonWrapper.rooms)
@@ -66,6 +69,7 @@ public class ConnectionGenerator : MonoBehaviour
                 }
             }
         }
+        WriteDebug("Connection generation complete. " + dungeonWrapper.doors.Count + " rooms were removed successfullly, spanning " + (executionDelay > 0 ? ((Time.time - time)) + " seconds." : (stopwatch.ElapsedMilliseconds + "ms.")));
         StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.ConnectionsCompleted));
     }
 
