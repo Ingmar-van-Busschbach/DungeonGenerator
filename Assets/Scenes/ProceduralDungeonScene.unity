@@ -132,6 +132,8 @@ GameObject:
   - component: {fileID: 96270178}
   - component: {fileID: 96270179}
   - component: {fileID: 96270180}
+  - component: {fileID: 96270182}
+  - component: {fileID: 96270181}
   m_Layer: 0
   m_Name: DungeonGenerator
   m_TagString: Untagged
@@ -167,8 +169,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   globalAutoGenerate: 1
-  executionDelayType: 2
-  globalExecutionDelay: 0
+  executionDelayType: 1
+  globalExecutionDelay: 0.01
   dungeonStatus: 0
 --- !u!114 &96270178
 MonoBehaviour:
@@ -226,8 +228,44 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   removeRatio: 0.4
+  removeLoops: 1
+  searchType: 2
   autoGenerate: 1
   executionDelay: 0
+  writeDebug: 1
+  drawConnections: 1
+--- !u!114 &96270181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96270174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eb767fcf970b034ab12088f2470b5b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  doorColor: {r: 1, g: 1, b: 1, a: 1}
+  autoGenerate: 1
+  executionDelay: 0.02
+--- !u!114 &96270182
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96270174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2e4259c89aea324f85de70bbd89feb5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  removeRatio: 0.1
+  removeLoops: 1
+  autoGenerate: 1
+  executionDelay: 0.02
   writeDebug: 1
   drawConnections: 1
 --- !u!1 &330585543

@@ -24,13 +24,6 @@ public class DungeonWrapperEditor : Editor
                     doorGenerator.StartGeneration();
                 }
             }
-            if (dungeonWrapper.gameObject.TryGetComponent(out ConnectionGenerator connectionGenerator))
-            {
-                if (GUILayout.Button("Generate Connections"))
-                {
-                    connectionGenerator.StartGeneration();
-                }
-            }
         }
     }
 }
