@@ -87,8 +87,11 @@ public class CycleReducer : MonoBehaviour
         {
             if (CanRemoveDoor(doors[i], doors))
             {
-                removeCount++;
-                RemoveDoor(doors, doors[i]);
+                if (DoorRemovalLeavesDungeonConnected(doors[i], dungeonWrapper.reducedRooms))
+                {
+                    removeCount++;
+                    RemoveDoor(doors, doors[i]);
+                }
             }
         }
     }
@@ -105,6 +108,41 @@ public class CycleReducer : MonoBehaviour
         HasConnectingDoorRecursiveDFS(initialSearchDoor, connections);
         door.pendingDeletion = false;
         return connections.Count == doors.Count - 1;
+    }
+
+    private bool DoorRemovalLeavesDungeonConnected(DoorWrapper door, List<RoomWrapper> rooms)
+    {
+        HashSet<RoomWrapper> connections = new();
+        RoomWrapper room = null;
+        foreach(RoomWrapper connectingRoom in door.connectingRooms)
+        {
+            if(room == null)
+            {
+                room = connectingRoom;
+            }
+        }
+        door.pendingDeletion = true;
+        HasConnectingRoomRecursiveDFS(room, connections);
+        door.pendingDeletion = false;
+        return connections.Count == rooms.Count;
+    }
+
+    private void HasConnectingRoomRecursiveDFS(RoomWrapper room, HashSet<RoomWrapper> connections)
+    {
+        if (!connections.Contains(room))
+        {
+            connections.Add(room);
+            foreach (DoorWrapper door in room.doors)
+            {
+                if (!door.pendingDeletion)
+                {
+                    foreach (RoomWrapper connectingRoom in door.connectingRooms)
+                    {
+                        HasConnectingRoomRecursiveDFS(connectingRoom, connections);
+                    }
+                }
+            }
+        }
     }
 
     private DoorWrapper SelectDoor(DoorWrapper door)
