@@ -170,7 +170,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalAutoGenerate: 1
   executionDelayType: 1
-  globalExecutionDelay: 0.01
+  globalExecutionDelay: 0.05
   dungeonStatus: 0
 --- !u!114 &96270178
 MonoBehaviour:
@@ -227,8 +227,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646751464022eaf4abc3b0ebc7501dd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeRatio: 0.4
-  removeLoops: 1
+  removeRatio: 0.1
   searchType: 2
   autoGenerate: 1
   executionDelay: 0
@@ -262,8 +261,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2e4259c89aea324f85de70bbd89feb5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeRatio: 0.1
-  removeLoops: 1
   autoGenerate: 1
   executionDelay: 0.02
   writeDebug: 1

@@ -7,8 +7,7 @@ public class RoomReducer : MonoBehaviour
 {
     [Header("Connection Settings")]
     [Tooltip("The ratio of smallest rooms that will be removed from the dungeon, if able.")]
-    [Range(0, 1)] [SerializeField] private float removeRatio = 0.1f;
-    [SerializeField] private bool removeLoops = true;
+    [Range(0, 1)][SerializeField] private float removeRatio = 0.1f;
     [SerializeField] private SearchType searchType = SearchType.DepthFirstSearch;
 
     [Space]
@@ -52,6 +51,7 @@ public class RoomReducer : MonoBehaviour
         float time = Time.time;
         WriteDebug("Starting connection generation...");
         dungeonWrapper.reducedRooms = new();
+        dungeonWrapper.reducedDoors = new();
         foreach (RoomWrapper room in dungeonWrapper.rooms)
         {
             dungeonWrapper.reducedRooms.Add(room);

@@ -53,7 +53,7 @@ public class DungeonWrapper : MonoBehaviour
 
     private void Update()
     {
-        if (IAContinue.WasPressedThisFrame())
+        if (IAContinue.WasPressedThisFrame() && !continueStep)
         {
             continueStep = true;
         }

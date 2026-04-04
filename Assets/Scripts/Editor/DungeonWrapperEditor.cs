@@ -17,13 +17,6 @@ public class DungeonWrapperEditor : Editor
                     dungeonGenerator.StartGeneration();
                 }
             }
-            if (dungeonWrapper.gameObject.TryGetComponent(out DoorGenerator doorGenerator))
-            {
-                if (GUILayout.Button("Generate Doors"))
-                {
-                    doorGenerator.StartGeneration();
-                }
-            }
         }
     }
 }

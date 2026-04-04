@@ -6,13 +6,6 @@ using UnityEngine;
 [RequireComponent(typeof(DungeonWrapper))]
 public class CycleReducer : MonoBehaviour
 {
-    [Header("Connection Settings")]
-    [Tooltip("The ratio of smallest rooms that will be removed from the dungeon, if able.")]
-    [Range(0, 1)] [SerializeField] private float removeRatio = 0.1f;
-    [SerializeField] private bool removeLoops = true;
-
-    [Space]
-
     [Header("Algorithm")]
     [Tooltip("Whether to start generating connections on Start, or to wait for the Generate Connections button to be pressed.")]
     public bool autoGenerate = true;
@@ -51,6 +44,7 @@ public class CycleReducer : MonoBehaviour
         System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
         float time = Time.time;
         WriteDebug("Starting connection generation...");
+        dungeonWrapper.reducedDoors = new();
         foreach (RoomWrapper room in dungeonWrapper.reducedRooms)
         {
             foreach (DoorWrapper door in room.doors)

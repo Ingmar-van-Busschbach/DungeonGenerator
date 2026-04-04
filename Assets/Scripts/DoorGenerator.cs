@@ -57,7 +57,8 @@ public class DoorGenerator : MonoBehaviour
         float time = Time.time;
         numberGenerator = new System.Random(seed);
         dungeonWrapper.doors = new();
-        
+        dungeonWrapper.reducedDoors = new();
+        dungeonWrapper.reducedRooms = new();
         int cycles = 0;
         WriteDebug("Starting door generation...");
 
