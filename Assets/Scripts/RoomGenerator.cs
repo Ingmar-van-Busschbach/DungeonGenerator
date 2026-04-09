@@ -5,7 +5,7 @@ using UnityEngine;
 /// Computational complexity: O(2n-1), with n being the amount of rooms generated. Theoretical limit of rooms generated is floor(DungeonWidth/minRoomWidth) * floor(DungeonHeight/minRoomHeight)
 /// </summary>
 [RequireComponent(typeof(DungeonWrapper))]
-public class RoomGenerator : MonoBehaviour
+public class RoomGenerator : ProceduralGenerator
 {
     [Header("Dungeon Settings")]
     [Tooltip("Random number generator seed")]
@@ -27,14 +27,6 @@ public class RoomGenerator : MonoBehaviour
 
     [Space]
 
-    [Header("Algorithm")]
-    [Tooltip("Whether to start generating a dungeon on Start, or to wait for the Generate Dungeon button to be pressed.")]
-    public bool generateOnStart = true;
-    [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)] public float executionDelay = 0.02f;
-
-    [Space]
-
     [Header("Debug")]
     [SerializeField] private bool writeDebug = true;
     [SerializeField] private bool drawDungeonGeneration = true;
@@ -46,7 +38,7 @@ public class RoomGenerator : MonoBehaviour
     private void Start()
     {
         dungeonWrapper = GetComponent<DungeonWrapper>();
-        if (generateOnStart)
+        if (autoGenerate)
         {
             StartCoroutine(GenerateDungeon());
         }

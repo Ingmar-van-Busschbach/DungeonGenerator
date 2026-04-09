@@ -134,6 +134,7 @@ GameObject:
   - component: {fileID: 96270180}
   - component: {fileID: 96270182}
   - component: {fileID: 96270181}
+  - component: {fileID: 96270183}
   m_Layer: 0
   m_Name: DungeonGenerator
   m_TagString: Untagged
@@ -184,14 +185,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d94491caa48e3ae4fbfe23169b5f5ef9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoGenerate: 1
+  executionDelay: 0
   seed: 40
   dungeonSize: {x: 150, y: 250}
   roomMinSize: {x: 20, y: 25}
   splitDirectionBias: 0.57
   roomMaxSize: {x: 60, y: 60}
   largeRoomChance: 0.57
-  generateOnStart: 1
-  executionDelay: 0
   writeDebug: 1
   drawDungeonGeneration: 1
   drawRooms: 1
@@ -207,12 +208,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1923a3ab12ff86e4a8bbf0bf33088772, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  autoGenerate: 1
+  executionDelay: 0
   seed: 40
   doorMinSize: 5
   doorMaxSize: 10
   minDistanceFromWalls: 2
-  autoGenerate: 1
-  executionDelay: 0
   writeDebug: 1
   drawDoors: 1
 --- !u!114 &96270180
@@ -227,10 +228,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 646751464022eaf4abc3b0ebc7501dd2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  removeRatio: 0.1
-  searchType: 2
   autoGenerate: 1
   executionDelay: 0
+  removeRatio: 0.4
+  searchType: 2
   writeDebug: 1
   drawConnections: 1
 --- !u!114 &96270181
@@ -245,10 +246,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6eb767fcf970b034ab12088f2470b5b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  roomColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  doorColor: {r: 1, g: 1, b: 1, a: 1}
   autoGenerate: 1
   executionDelay: 0.02
+  roomColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
+  doorColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &96270182
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,6 +266,22 @@ MonoBehaviour:
   executionDelay: 0.02
   writeDebug: 1
   drawConnections: 1
+--- !u!114 &96270183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 96270174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b835a9360f2483e44bc99a8ea9977fd1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  autoGenerate: 1
+  executionDelay: 0.02
+  floorPrefab: {fileID: 6388081758412722857, guid: 678890b3a7f8b60429559e39737233d9, type: 3}
+  wallPrefab: {fileID: 3844372119234719181, guid: 1d52d22ca8fa3e94e9f800e52d2167c4, type: 3}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

@@ -3,20 +3,12 @@ using System.Collections;
 using UnityEngine;
 
 [RequireComponent(typeof(DungeonWrapper))]
-public class RoomReducer : MonoBehaviour
+public class RoomReducer : ProceduralGenerator
 {
     [Header("Connection Settings")]
     [Tooltip("The ratio of smallest rooms that will be removed from the dungeon, if able.")]
     [Range(0, 1)][SerializeField] private float removeRatio = 0.1f;
     [SerializeField] private SearchType searchType = SearchType.DepthFirstSearch;
-
-    [Space]
-
-    [Header("Algorithm")]
-    [Tooltip("Whether to start generating connections on Start, or to wait for the Generate Connections button to be pressed.")]
-    public bool autoGenerate = true;
-    [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)] public float executionDelay = 0.02f;
 
     [Space]
 

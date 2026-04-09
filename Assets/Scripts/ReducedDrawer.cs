@@ -2,19 +2,11 @@
 using UnityEngine;
 
 [RequireComponent(typeof(DungeonWrapper))]
-public class ReducedDrawer : MonoBehaviour
+public class ReducedDrawer : ProceduralGenerator
 {
     [Header("Drawing Settings")]
     [SerializeField] private Color roomColor = Color.red;
     [SerializeField] private Color doorColor = Color.blue;
-
-    [Space]
-
-    [Header("Algorithm")]
-    [Tooltip("Whether to start generating connections on Start, or to wait for the Generate Connections button to be pressed.")]
-    public bool autoGenerate = true;
-    [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)] public float executionDelay = 0.02f;
 
     private DungeonWrapper dungeonWrapper;
 
@@ -56,6 +48,7 @@ public class ReducedDrawer : MonoBehaviour
             }
             DrawDoor(door, doorColor, "Doors");
         }
+        StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.RoomsDrawn));
     }
 
     private void DrawRoom(RoomWrapper currentRoom, Color color, string debugDrawer = "default")

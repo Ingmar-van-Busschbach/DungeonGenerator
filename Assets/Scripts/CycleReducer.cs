@@ -4,16 +4,8 @@ using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(DungeonWrapper))]
-public class CycleReducer : MonoBehaviour
+public class CycleReducer : ProceduralGenerator
 {
-    [Header("Algorithm")]
-    [Tooltip("Whether to start generating connections on Start, or to wait for the Generate Connections button to be pressed.")]
-    public bool autoGenerate = true;
-    [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)] public float executionDelay = 0.02f;
-
-    [Space]
-
     [Header("Debug")]
     [SerializeField] private bool writeDebug = true;
     [SerializeField] private bool drawConnections = true;
@@ -79,13 +71,10 @@ public class CycleReducer : MonoBehaviour
     {     
         for(int i = 0; i < doors.Count; i++)
         {
-            if (CanRemoveDoor(doors[i], doors))
+            if (DoorRemovalLeavesDungeonConnected(doors[i], dungeonWrapper.reducedRooms))
             {
-                if (DoorRemovalLeavesDungeonConnected(doors[i], dungeonWrapper.reducedRooms))
-                {
-                    removeCount++;
-                    RemoveDoor(doors, doors[i]);
-                }
+                removeCount++;
+                RemoveDoor(doors, doors[i]);
             }
         }
     }

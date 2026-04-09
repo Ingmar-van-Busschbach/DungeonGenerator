@@ -2,6 +2,9 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
+using System;
+using Unity.VisualScripting;
 
 public class DungeonWrapper : MonoBehaviour
 {
@@ -25,6 +28,9 @@ public class DungeonWrapper : MonoBehaviour
     private RoomReducer roomReducer;
     private CycleReducer cycleReducer;
     private ReducedDrawer reducedDrawer;
+    private AssetSpawner assetSpawner;
+
+    private HashSet<ProceduralGenerator> proceduralGenerators = new();
 
     private InputSystem_Actions inputActions;
     private InputAction IAContinue;
@@ -64,100 +70,50 @@ public class DungeonWrapper : MonoBehaviour
         if (TryGetComponent(out RoomGenerator roomGenerator))
         {
             this.roomGenerator = roomGenerator;
+            proceduralGenerators.Add(roomGenerator);
         }
         if (TryGetComponent(out DoorGenerator doorGenerator))
         {
             this.doorGenerator = doorGenerator;
+            proceduralGenerators.Add(doorGenerator);
         }
         if (TryGetComponent(out RoomReducer roomReducer))
         {
             this.roomReducer = roomReducer;
+            proceduralGenerators.Add(roomReducer);
         }
         if (TryGetComponent(out CycleReducer cycleReducer))
         {
             this.cycleReducer = cycleReducer;
+            proceduralGenerators.Add(cycleReducer);
         }
         if (TryGetComponent(out ReducedDrawer reducedDrawer))
         {
             this.reducedDrawer = reducedDrawer;
+            proceduralGenerators.Add(reducedDrawer);
+        }
+        if(TryGetComponent(out AssetSpawner assetSpawner))
+        {
+            this.assetSpawner = assetSpawner;
+            proceduralGenerators.Add(assetSpawner);
         }
     }
 
     private void ApplyGlobalSettings()
     {
-        if (roomGenerator != null)
+        foreach(ProceduralGenerator generator in proceduralGenerators)
         {
             if (globalAutoGenerate)
             {
-                roomGenerator.generateOnStart = true;
+                generator.autoGenerate = true;
             }
             if (executionDelayType != ExecutionDelayType.None)
             {
-                roomGenerator.executionDelay = globalExecutionDelay;
+                generator.executionDelay = globalExecutionDelay;
             }
             else
             {
-                roomGenerator.executionDelay = 0;
-            }
-        }
-        if (doorGenerator != null)
-        {
-            if (globalAutoGenerate)
-            {
-                doorGenerator.autoGenerate = true;
-            }
-            if (executionDelayType != ExecutionDelayType.None)
-            {
-                doorGenerator.executionDelay = globalExecutionDelay;
-            }
-            else
-            {
-                doorGenerator.executionDelay = 0;
-            }
-        }
-        if (roomReducer != null)
-        {
-            if (globalAutoGenerate)
-            {
-                roomReducer.autoGenerate = true;
-            }
-            if (executionDelayType != ExecutionDelayType.None)
-            {
-                roomReducer.executionDelay = globalExecutionDelay;
-            }
-            else
-            {
-                roomReducer.executionDelay = 0;
-            }
-        }
-        if (cycleReducer != null)
-        {
-            if (globalAutoGenerate)
-            {
-                cycleReducer.autoGenerate = true;
-            }
-            if (executionDelayType != ExecutionDelayType.None)
-            {
-                cycleReducer.executionDelay = globalExecutionDelay;
-            }
-            else
-            {
-                cycleReducer.executionDelay = 0;
-            }
-        }
-        if (reducedDrawer != null)
-        {
-            if (globalAutoGenerate)
-            {
-                reducedDrawer.autoGenerate = true;
-            }
-            if (executionDelayType != ExecutionDelayType.None)
-            {
-                reducedDrawer.executionDelay = globalExecutionDelay;
-            }
-            else
-            {
-                reducedDrawer.executionDelay = 0;
+                generator.executionDelay = 0;
             }
         }
     }
@@ -176,7 +132,7 @@ public class DungeonWrapper : MonoBehaviour
     public IEnumerator ChangeDungeonStatus(DungeonStatus dungeonStatus)
     {
         this.dungeonStatus = dungeonStatus;
-        if (executionDelayType == ExecutionDelayType.ManualBetweenSteps && dungeonStatus != DungeonStatus.RoomsDrawn)
+        if (executionDelayType == ExecutionDelayType.ManualBetweenSteps && dungeonStatus != DungeonStatus.DungeonGenerationComplete)
         {
             yield return new WaitUntil(() => continueStep);
             continueStep = false;
@@ -220,11 +176,23 @@ public class DungeonWrapper : MonoBehaviour
                 }
                 break;
             case DungeonStatus.RoomsDrawn:
+                if (assetSpawner != null)
+                {
+                    if (assetSpawner.autoGenerate)
+                    {
+                        assetSpawner.StartSpawning();
+                    }
+                }
+                break;
+            case DungeonStatus.AssetsSpawned:
+                StartCoroutine(ChangeDungeonStatus(DungeonStatus.DungeonGenerationComplete));
+                break;
+            case DungeonStatus.DungeonGenerationComplete:
                 Debug.Log("Dungeon generation complete");
                 break;
         }
     }
 
-    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, RoomsReduced, CyclesReduced, RoomsDrawn }
+    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, RoomsReduced, CyclesReduced, RoomsDrawn, AssetsSpawned, DungeonGenerationComplete }
     public enum ExecutionDelayType { None, ManualBetweenSteps, Automatic }
 }

@@ -7,21 +7,13 @@ using UnityEngine;
 /// </summary>
 
 [RequireComponent(typeof(DungeonWrapper))]
-public class DoorGenerator : MonoBehaviour
+public class DoorGenerator : ProceduralGenerator
 {
     [Header("Door Settings")]
     [Range(0, 100)][SerializeField] private int seed = 90;
     [SerializeField] private int doorMinSize = 5;
     [SerializeField] private int doorMaxSize = 10;
     [SerializeField] private int minDistanceFromWalls = 2;
-
-    [Space]
-
-    [Header("Algorithm")]
-    [Tooltip("Whether to start generating rooms on Start, or to wait for the Generate Room button to be pressed.")]
-    public bool autoGenerate = true;
-    [Tooltip("The time delay between generating rooms as part of the algorithm, in seconds.")]
-    [Range(0, 0.1f)] public float executionDelay = 0.02f;
 
     [Space]
 
