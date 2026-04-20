@@ -32,7 +32,8 @@ public class ReducedDrawer : ProceduralGenerator
 
     private IEnumerator DrawRooms()
     {
-        foreach(RoomWrapper room in dungeonWrapper.reducedRooms)
+        Debug.Log("Starting redrawing of dungeon...");
+        foreach (RoomWrapper room in dungeonWrapper.reducedRooms)
         {
             if (executionDelay > 0)
             {
@@ -48,6 +49,7 @@ public class ReducedDrawer : ProceduralGenerator
             }
             DrawDoor(door, doorColor, "Doors");
         }
+        Debug.Log("redrawing of dungeon completed...");
         StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.RoomsDrawn));
     }
 

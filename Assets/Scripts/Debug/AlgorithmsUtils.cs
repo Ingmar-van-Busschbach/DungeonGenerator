@@ -28,7 +28,7 @@ public class AlgorithmsUtils
         }
     }
     
-    public static void FillRectangle(char[,] array, RectInt area, char value)
+    public static void FillRectangle(bool[,] array, RectInt area, bool value)
     {
         for (int i = area.y; i < area.y + area.height; i++)
         {
@@ -39,7 +39,7 @@ public class AlgorithmsUtils
         }
     }
     
-    public static void FillRectangleOutline(char[,] array, RectInt area, char value) 
+    public static void FillRectangleOutline(bool[,] array, RectInt area, bool value) 
     { 
         
         int endX = area.x + area.width - 1;

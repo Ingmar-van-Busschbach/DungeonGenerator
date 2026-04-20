@@ -11,7 +11,7 @@ public class RoomGenerator : ProceduralGenerator
     [Tooltip("Random number generator seed")]
     [Range(0, 100)][SerializeField] private int seed = 40;
     [Tooltip("Size of the whole dungeon in meters. X is width, Y is height.")]
-    [SerializeField] private Vector2 dungeonSize = new Vector2(150, 250);
+    public Vector2 dungeonSize = new Vector2(150, 250);
 
     [Space]
 
@@ -123,8 +123,6 @@ public class RoomGenerator : ProceduralGenerator
     private void CompleteRoom(RoomWrapper currentRoom)
     {
         dungeonWrapper.rooms.Add(currentRoom);
-        //Make the room 1 unit larger in every direction to allow the rooms to overlap for future algorithms.
-        currentRoom.room = new RectInt(currentRoom.room.position.x - 1, currentRoom.room.position.y - 1, currentRoom.room.width + 2, currentRoom.room.height + 2);
         if (drawRooms)
         {
             DrawRoom(currentRoom, Color.red, "Leafs");
@@ -160,15 +158,15 @@ public class RoomGenerator : ProceduralGenerator
 
     private IEnumerator SplitHorizontally(RoomWrapper currentRoom)
     {
-        int splitPointX = numberGenerator.Next((int)roomMinSize.x, (int)(currentRoom.room.width - roomMinSize.x));
-        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y, splitPointX, currentRoom.room.height))));
+        int splitPointX = numberGenerator.Next((int)roomMinSize.x, (int)(currentRoom.room.width - roomMinSize.x)-1);
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y, splitPointX+1, currentRoom.room.height))));
         yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x + splitPointX, currentRoom.room.position.y, currentRoom.room.width - splitPointX, currentRoom.room.height))));
     }
 
     private IEnumerator SplitVertically(RoomWrapper currentRoom)
     {
-        int splitPointY = numberGenerator.Next((int)roomMinSize.y, (int)(currentRoom.room.height - roomMinSize.y));
-        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y, currentRoom.room.width, splitPointY))));
+        int splitPointY = numberGenerator.Next((int)roomMinSize.y, (int)(currentRoom.room.height - roomMinSize.y)-1);
+        yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y, currentRoom.room.width, splitPointY+1))));
         yield return StartCoroutine(CheckRoomComplete(new RoomWrapper(new RectInt(currentRoom.room.position.x, currentRoom.room.position.y + splitPointY, currentRoom.room.width, currentRoom.room.height - splitPointY))));
     }
 

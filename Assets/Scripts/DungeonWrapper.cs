@@ -2,9 +2,8 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
 using System;
-using Unity.VisualScripting;
+using System.ComponentModel;
 
 public class DungeonWrapper : MonoBehaviour
 {
@@ -21,6 +20,7 @@ public class DungeonWrapper : MonoBehaviour
     public List<RoomWrapper> reducedRooms = new();
     public List<DoorWrapper> doors = new();
     public List<DoorWrapper> reducedDoors = new();
+    public bool[,] tileMap;
     public DungeonStatus dungeonStatus = DungeonStatus.Empty;
 
     private RoomGenerator roomGenerator;
@@ -28,7 +28,8 @@ public class DungeonWrapper : MonoBehaviour
     private RoomReducer roomReducer;
     private CycleReducer cycleReducer;
     private ReducedDrawer reducedDrawer;
-    private AssetSpawner assetSpawner;
+    private TileMapGenerator tileMapGenerator;
+    private MarchingSquareSpawner marchingSquareSpawner;
 
     private HashSet<ProceduralGenerator> proceduralGenerators = new();
 
@@ -92,10 +93,15 @@ public class DungeonWrapper : MonoBehaviour
             this.reducedDrawer = reducedDrawer;
             proceduralGenerators.Add(reducedDrawer);
         }
-        if(TryGetComponent(out AssetSpawner assetSpawner))
+        if(TryGetComponent(out TileMapGenerator tileMapGenerator))
         {
-            this.assetSpawner = assetSpawner;
-            proceduralGenerators.Add(assetSpawner);
+            this.tileMapGenerator = tileMapGenerator;
+            proceduralGenerators.Add(tileMapGenerator);
+        }
+        if(TryGetComponent(out MarchingSquareSpawner marchingSquareSpawner))
+        {
+            this.marchingSquareSpawner = marchingSquareSpawner;
+            proceduralGenerators.Add(marchingSquareSpawner);
         }
     }
 
@@ -176,11 +182,20 @@ public class DungeonWrapper : MonoBehaviour
                 }
                 break;
             case DungeonStatus.RoomsDrawn:
-                if (assetSpawner != null)
+                if (tileMapGenerator != null)
                 {
-                    if (assetSpawner.autoGenerate)
+                    if (tileMapGenerator.autoGenerate)
                     {
-                        assetSpawner.StartSpawning();
+                        tileMapGenerator.StartGeneration();
+                    }
+                }
+                break;
+            case DungeonStatus.TileMapGenerated:
+                if (marchingSquareSpawner != null)
+                {
+                    if (marchingSquareSpawner.autoGenerate)
+                    {
+                        marchingSquareSpawner.StartGeneration();
                     }
                 }
                 break;
@@ -193,6 +208,6 @@ public class DungeonWrapper : MonoBehaviour
         }
     }
 
-    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, RoomsReduced, CyclesReduced, RoomsDrawn, AssetsSpawned, DungeonGenerationComplete }
+    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, RoomsReduced, CyclesReduced, RoomsDrawn, TileMapGenerated, AssetsSpawned, DungeonGenerationComplete }
     public enum ExecutionDelayType { None, ManualBetweenSteps, Automatic }
 }
