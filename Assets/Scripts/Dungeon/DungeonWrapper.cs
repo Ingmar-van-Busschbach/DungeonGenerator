@@ -30,6 +30,9 @@ public class DungeonWrapper : MonoBehaviour
     private ReducedDrawer reducedDrawer;
     private TileMapGenerator tileMapGenerator;
     private MarchingSquareSpawner marchingSquareSpawner;
+    private FloodFillSpawner floodFillSpawner;
+    private PlayerSpawner playerSpawner;
+    private NavMeshGenerator navMeshGenerator;
 
     private HashSet<ProceduralGenerator> proceduralGenerators = new();
 
@@ -102,6 +105,21 @@ public class DungeonWrapper : MonoBehaviour
         {
             this.marchingSquareSpawner = marchingSquareSpawner;
             proceduralGenerators.Add(marchingSquareSpawner);
+        }
+        if (TryGetComponent(out FloodFillSpawner floodFillSpawner))
+        {
+            this.floodFillSpawner = floodFillSpawner;
+            proceduralGenerators.Add(floodFillSpawner);
+        }
+        if(TryGetComponent(out PlayerSpawner playerSpawner))
+        {
+            this.playerSpawner = playerSpawner;
+            proceduralGenerators.Add(playerSpawner);
+        }
+        if (TryGetComponent(out NavMeshGenerator navMeshGenerator))
+        {
+            this.navMeshGenerator = navMeshGenerator;
+            proceduralGenerators.Add(navMeshGenerator);
         }
     }
 
@@ -199,7 +217,34 @@ public class DungeonWrapper : MonoBehaviour
                     }
                 }
                 break;
-            case DungeonStatus.AssetsSpawned:
+            case DungeonStatus.WallsSpawned:
+                if(floodFillSpawner  != null)
+                {
+                    if (floodFillSpawner.autoGenerate)
+                    {
+                        floodFillSpawner.StartGeneration();
+                    }
+                }
+                break;
+            case DungeonStatus.FloorSpawned:
+                if (navMeshGenerator != null)
+                {
+                    if (navMeshGenerator.autoGenerate)
+                    {
+                        navMeshGenerator.StartGeneration();
+                    }
+                }
+                break;
+            case DungeonStatus.NavMeshGenerated:
+                if (playerSpawner != null)
+                {
+                    if (playerSpawner.autoGenerate)
+                    {
+                        playerSpawner.StartSpawning();
+                    }
+                }
+                break;
+            case DungeonStatus.PlayerSpawned:
                 StartCoroutine(ChangeDungeonStatus(DungeonStatus.DungeonGenerationComplete));
                 break;
             case DungeonStatus.DungeonGenerationComplete:
@@ -208,6 +253,6 @@ public class DungeonWrapper : MonoBehaviour
         }
     }
 
-    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, RoomsReduced, CyclesReduced, RoomsDrawn, TileMapGenerated, AssetsSpawned, DungeonGenerationComplete }
+    public enum DungeonStatus { Empty, RoomsCompleted, DoorsCompleted, RoomsReduced, CyclesReduced, RoomsDrawn, TileMapGenerated, WallsSpawned, FloorSpawned, NavMeshGenerated, PlayerSpawned, DungeonGenerationComplete }
     public enum ExecutionDelayType { None, ManualBetweenSteps, Automatic }
 }

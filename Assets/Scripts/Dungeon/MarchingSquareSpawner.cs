@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using static DungeonWrapper;
 
 public class MarchingSquareSpawner : ProceduralGenerator
 {
@@ -33,7 +32,7 @@ public class MarchingSquareSpawner : ProceduralGenerator
         {
             Destroy(parent);
         }
-        parent = new GameObject("Parent");
+        parent = new GameObject("Walls");
         for (int i = 0; i < dungeonWrapper.tileMap.GetLength(0) - 1; i++)
         {
             for (int j = 0; j < dungeonWrapper.tileMap.GetLength(1) - 1; j++)
@@ -47,7 +46,8 @@ public class MarchingSquareSpawner : ProceduralGenerator
                 {
                     yield return new WaitForSeconds(executionDelay);
                 }
-                Instantiate(prefabs[currentCase], new Vector3(j, 0, i) + offset, Quaternion.identity, parent.transform);
+                GameObject wall = Instantiate(prefabs[currentCase], new Vector3(j, 0, i) + offset, Quaternion.identity, parent.transform);
+                wall.name = "Wall [" + j + "," + i + "]";
             }
             if (executionDelay > 0 && !stepPerObject)
             {
@@ -55,6 +55,6 @@ public class MarchingSquareSpawner : ProceduralGenerator
             }
         }
         Debug.Log("Spawning of dungeon assets completed, spanning " + (executionDelay > 0 ? ((Time.time - time)) + " seconds." : (stopwatch.ElapsedMilliseconds + "ms.")));
-        StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonStatus.AssetsSpawned));
+        StartCoroutine(dungeonWrapper.ChangeDungeonStatus(DungeonWrapper.DungeonStatus.WallsSpawned));
     }
 }
