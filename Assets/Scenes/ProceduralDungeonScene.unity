@@ -175,7 +175,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   globalAutoGenerate: 1
   executionDelayType: 1
-  globalExecutionDelay: 0.02
+  globalExecutionDelay: 0
   dungeonStatus: 0
 --- !u!114 &96270178
 MonoBehaviour:
